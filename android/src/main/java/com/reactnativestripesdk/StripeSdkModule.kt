@@ -2055,11 +2055,15 @@ class StripeSdkModule(
 
   private fun setupComposeCompatView() {
     UiThreadUtil.runOnUiThread {
-      val activity = reactApplicationContext.currentActivity ?: return@runOnUiThread
-      composeCompatView = composeCompatView ?: StripeAbstractComposeView.CompatView(
-        context = activity
-      ).also {
-        activity.findViewById<ViewGroup>(android.R.id.content)?.addView(it)
+      try {
+        val activity = reactApplicationContext.currentActivity ?: return@runOnUiThread
+        composeCompatView = composeCompatView ?: StripeAbstractComposeView.CompatView(
+          context = activity
+        ).also {
+          activity.findViewById<ViewGroup>(android.R.id.content)?.addView(it)
+        }
+      } catch (e: Exception) {
+        Log.w(TAG, "setupComposeCompatView failed, Compose views in Modals may not render", e)
       }
     }
   }
